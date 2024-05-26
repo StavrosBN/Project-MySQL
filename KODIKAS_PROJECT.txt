@@ -1,0 +1,1089 @@
+DROP database IF EXISTS erecruit2023 ;
+Create database erecruit2023;
+use erecruit2023;
+
+create table etairia (
+AFM CHAR(9) DEFAULT 'unknown' NOT NULL,
+DOY VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+name VARCHAR(35) DEFAULT 'unknown' NOT NULL,
+tel VARCHAR(10) NOT NULL,
+street VARCHAR(15) DEFAULT 'unknown' NOT NULL,
+num INT(11) UNSIGNED DEFAULT '0' NOT NULL,
+city VARCHAR(45)  DEFAULT 'unknown' NOT NULL,
+country VARCHAR(15) DEFAULT 'unknown' NOT NULL,
+PRIMARY KEY (AFM)
+) engine=InnoDB;
+
+
+create table user (
+username VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+password VARCHAR(20) DEFAULT 'unknown' NOT NULL,
+name VARCHAR(25) DEFAULT 'unknown' NOT NULL,
+lastname VARCHAR(35) DEFAULT 'unknown' NOT NULL,
+reg_date DATETIME NOT NULL,
+email VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+PRIMARY KEY (username)
+)engine=InnoDB;
+
+
+
+create table evaluator (
+username VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+exp_years TINYINT(4) DEFAULT '0'  NOT NULL,
+firm CHAR (9) DEFAULT 'unknown' NOT NULL,
+PRIMARY KEY (username),
+CONSTRAINT EVALETAIREIA
+FOREIGN KEY (firm) REFERENCES etairia(AFM)
+ON DELETE CASCADE ON UPDATE CASCADE
+)engine=InnoDB;
+
+
+
+
+create table job (
+id INT(11) NOT NULL  AUTO_INCREMENT,
+start_date DATE NOT NULL,
+salary FLOAT DEFAULT '0' NOT NULL ,
+position VARCHAR(60) DEFAULT 'unknown' NOT NULL,
+edra VARCHAR(60) DEFAULT 'unknown' NOT NULL,
+evaluator VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+announce_date DATETIME NOT NULL,
+submission_date DATE NOT NULL,
+PRIMARY KEY(id) ,
+CONSTRAINT JOBEVALUATOR
+FOREIGN KEY (evaluator) REFERENCES evaluator(username)
+ON DELETE CASCADE ON UPDATE CASCADE
+)engine=InnoDB;
+
+
+
+
+create table employee(
+username VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+bio TEXT,
+sistatikes VARCHAR(35) DEFAULT 'unknown' NOT NULL,
+certificates VARCHAR(35) DEFAULT 'unknown' NOT NULL,
+PRIMARY KEY (username),
+CONSTRAINT EMPLUSER
+FOREIGN KEY (username) REFERENCES user (username)
+ON DELETE CASCADE ON UPDATE CASCADE
+) engine=InnoDB;
+
+
+
+create table applies(
+cand_username VARCHAR(30)  DEFAULT 'unknown' NOT NULL,
+job_id INT(11) NOT NULL ,
+PRIMARY KEY (cand_username, job_id) ,
+CONSTRAINT APPEMP
+FOREIGN KEY (cand_username) REFERENCES employee(username)
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT APPJOB
+FOREIGN KEY (job_id) REFERENCES job(id) 
+ON DELETE CASCADE ON UPDATE CASCADE
+) engine=InnoDB;
+
+
+
+
+create table languages (
+candid VARCHAR(30)  DEFAULT 'unknown' NOT NULL,
+lang SET ('EN','FR','SP','GE','CH','GR'),
+PRIMARY KEY (lang),
+CONSTRAINT LANGEMP
+FOREIGN KEY (candid) REFERENCES employee(username)
+ON DELETE CASCADE ON UPDATE CASCADE
+) engine=InnoDB;
+
+
+create table project(
+candid VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+num TINYINT(4) DEFAULT '0'  NOT NULL,
+descr TEXT,
+url VARCHAR(60) DEFAULT 'unknown' NOT NULL,
+PRIMARY KEY (candid, num),
+CONSTRAINT PROJEMP
+FOREIGN KEY (candid) REFERENCES employee(username)
+ON DELETE CASCADE ON UPDATE CASCADE
+) engine=InnoDB;
+
+
+create table subject(
+title VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+descr TINYTEXT,
+belongs_to VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+PRIMARY KEY (title),
+CONSTRAINT SUBSUB
+FOREIGN KEY (belongs_to) REFERENCES subject(title)
+ON DELETE CASCADE ON UPDATE CASCADE
+) engine=InnoDB;
+
+
+
+create table requires(
+job_id INT(11) NOT NULL  ,
+subject_title VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+PRIMARY KEY (job_id, subject_title) ,
+CONSTRAINT REQJOB
+FOREIGN KEY (job_id) REFERENCES job(id)
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT REQSUB
+FOREIGN KEY (subject_title) REFERENCES subject (title)
+ON DELETE CASCADE ON UPDATE CASCADE
+)engine=InnoDB;
+
+
+create table degree(
+titlos VARCHAR(150)  DEFAULT 'unknown' NOT NULL,
+idryma VARCHAR(150)  DEFAULT 'unknown' NOT NULL,
+bathmida ENUM ('BSc','MSc','PhD'),
+PRIMARY KEY (titlos, idryma)
+)engine=InnoDB;
+
+
+create table has_degree(
+degr_title VARCHAR(150)  DEFAULT 'unknown' NOT NULL,
+degr_idryma VARCHAR(150)  DEFAULT 'unknown' NOT NULL,
+cand_username VARCHAR(30) DEFAULT 'unknown' NOT NULL,
+etos YEAR NOT NULL,
+grade FLOAT DEFAULT '0' NOT NULL ,
+PRIMARY KEY (degr_title, degr_idryma, cand_username),
+CONSTRAINT HASTITLOS  
+FOREIGN KEY (degr_title, degr_idryma) REFERENCES degree(titlos, idryma)
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT HASEMP
+FOREIGN KEY (cand_username) REFERENCES employee(username)
+ON DELETE CASCADE ON UPDATE CASCADE
+)engine=InnoDB;
+
+
+
+INSERT INTO etairia VALUES 
+	('183521664', 'Patra', 'Selini', '2610464867', 'Kyprou', '406', 'Patra', 'Ellada'),
+	('192215748', 'Patra', 'Select', '2610455824', 'Gounari', '230', 'Patra', 'Ellada'),
+	('163523498', 'Patra', 'Doloma', '2610764398', 'Ermou', '23', 'Patra', 'Ellada');
+
+INSERT INTO user VALUES 
+	('NikoKan', 'NikoKanel12!', 'Nikolas', 'Kanellopoulos', '2013-02-12', 'nikoskanel@gmail.com'),
+	('MariosK', 'MARIOSkk23@' , 'Marios', 'Kouvelas', '2014-11-23', 'marios23@gmail.com'),
+	('StavrosB', 'Stavreee3', 'Stavros', 'Bantzis', '2021-05-02', 'stavrosBan@gmail.com'),
+	('BabinoSarm', 'BabSarma$', 'Bambis', 'Sarmas', '2021-04-09', 'bambisarm@gmail.com'), 
+	('Aggelinho', 'AGGELIOAN312', 'Ioannis', 'Aggelou', '2019-06-24', 'aggel_gian@gmail.com'),
+	('Visarion', 'VissAR1', 'Vissarionas', 'Papageorgiou', '2017-04-02', 'VisPap@gmail.com'),
+	('MariaMak', 'MarMar243!', 'Maria', 'Markezi', '2012-04-30', 'MarkeziMar12@gmail.com'),
+	('NikolEvag', 'Nikolia12Nikolia21', 'Nikolia', 'Evaggelatou', '2010-08-06', 'nikoliaINFO@gmail.com'),
+	('Anasta', 'Sia345!', 'Anastasia', 'Bikou', '2018-06-23', 'anastaBIK42@gmail.com'),
+	('Alice12', 'AliceOIK16', 'Aliki', 'Oikonomaki', '2009-02-07', 'aliki.oikonom@gmail.com'),
+	('VasKou', 'KoukouVas', 'Vasiliki', 'Kounadi', '2019-09-14', 'vasiLIK.k@gmail.com'),
+	('ElenaD', 'helenA176!', 'Elena', 'Diomidi', '2022-05-31', 'elenaa@gmail.com');
+
+INSERT INTO evaluator VALUES 
+	('NikoKan', '2', '192215748'),
+	('MariosK', '3', '192215748'),
+	('StavrosB', '7', '183521664'),
+	('MariaMak', '5', '183521664'),
+	('NikolEvag', '3', '163523498'),
+	('Anasta', '4', '163523498');
+
+INSERT INTO job VALUES 
+	(null, '2012-04-04', 840, 'employee', 'Patra', 'StavrosB', '2021-05-06 12:23:15', '2022-05-07'),
+ 	(null, '2016-06-12', 703, 'employee', 'Patra', 'StavrosB', '2019-07-03 14:10:49', '2019-10-20'),
+	(null, '2018-09-09', 1200, 'manager', 'Patra', 'MariosK', '2021-03-20 09:00:00', '2021-06-20'),
+	(null, '2019-02-04', 1023, 'employee', 'Patra', 'NikolEvag', '2020-03-01 10:00:00', '2021-03-01'),
+	(null, '2019-04-21', 769, 'employee', 'Patra', 'NikolEvag', '2022-04-05 08:45:00', '2022-09-05'),
+	(null, '2018-05-07', 1309, 'manager', 'Patra', 'Anasta', '2019-07-28 12:00:00', '2020-09-28'),
+	(null, '2017-04-17', 680, 'employee', 'Patra', 'NikoKan', '2018-03-02 10:00:00', '2020-04-01'),
+	(null, '2018-09-02', 890, 'employee', 'Patra', 'MariaMak', '2019-10-01 10:00:00', '2020-10-02');
+
+INSERT INTO employee VALUES 
+	('BabinoSarm', 'Apofoitos Panepisthmiou, Diploma odighshs kathgorias B, Katoikos ths Patras', 'Sunergatikos', 'Aggliki Filologia'),
+	('Aggelinho', 'Apofoitos tou Panepisthmiou Patron,, Diploma odhghshs kathgorias B kai A, monimos katoikos ths Patras', 'Sunergatikos', 'Mhxanikos H/Y'),
+	('Visarion', 'Fysikos me empiria didaskalias sthn defterovathmia ekpaideush, prothimos na epektatho se mia etairia', 'Taktikos', 'Fusikis'),
+	('Alice12', 'Apofoith tou Panepisthmiou Patron me Didaktoriko sta mathimatika', 'Aristh', 'Mathimatikon'),
+	('VasKou', 'Apofoith tou Panepisthmiou Patron me metaptuxiako sthn eidikothta tou Aeronauphgou', 'tupiki sta oraria', 'Aeronauphgos'),
+	('ElenaD', 'Apofoith tou Panepisthmiou Patron me Empiria sthn anaplash dromon', 'Ergatikh', 'Politikos Mixanikos');
+
+INSERT INTO applies VALUES 
+	('BabinoSarm', '1'),
+	('Aggelinho', '2'),
+	('Visarion', '3'),
+	('Alice12', '4'),
+	('VasKou', '5'),
+	('ElenaD', '6');
+ 
+INSERT INTO languages VALUES 
+	('BabinoSarm', 'EN'),
+	('Visarion', 'FR'),
+	('Alice12', 'CH'),
+	('ElenaD', 'SP');
+
+INSERT INTO project VALUES 
+	('BabinoSarm', 1, 'Aggliki Grammatiki', 'unknown'),
+	('Alice12', 2, 'Mathimatika kai kathimerinothta', 'unknown'),
+	('Aggelinho', 3, 'Cyber Security', 'unknown'),
+	('VasKou', 4, 'Aerodunamikh', 'unknown'),
+	('Visarion', 5, 'Kvantikh Fusikh', 'unknown'),
+	('Visarion', 6, 'Elathria megaloy megethous', 'unknown'),
+	('ElenaD', 7, 'Anaplash dromon', 'unknown');
+
+INSERT INTO subject VALUES 
+	('unknown', 'No Description', 'unknown'),
+	('Arithmitikh', 'Counting Numbers for College', 'Arithmitikh'),
+	('Archea Mnimia', 'Greek Ancient History', 'Archea Mnimia'),
+	('Analysh Atmosfairas', 'Problems For CO2 Emitions', 'Analysh Atmosfairas'),
+	('Data Bases', 'Create Data Bases for University', 'Data Bases'),
+	('Machine Learning', 'Learnig about AI', 'Machine Learning'),
+	('Anaplash Dromon', 'Restoring Ruind Highways', 'Anaplash Dromon'),
+	('Analytikh Xhmeia', 'Atoms And More', 'Analytikh Xhmeia');
+
+INSERT INTO requires VALUES 
+	('1', 'unknown'),
+	('2', 'Arithmitikh'),
+	('3', 'Archea Mnimia'),
+	('4', 'Analysh Atmosfairas'),
+	('5', 'Data Bases'),
+	('6', 'Machine Learning'),
+	('7', 'Anaplash Dromon'),
+	('8', 'Analytikh Xhmeia');
+
+INSERT INTO degree VALUES 
+	('Robotiki', 'Tmhma Mhxanologon Mhxanikon Panepisthmio Patron', 'BSc'),
+	('Diktua', 'Tmhma Mhxanikon Hlektronikon Ypologiston Panepisthmio Patron', 'BSc'),
+	('Kvantiki Fusiki', 'Tmima Fusikon Episthmon Panepisthmio Patron', 'MSc'),
+	('Aeronafpigos', 'Tmhma Mhxanologon Mhxanikon Panepisthmio Patron', 'PhD'),
+	('Geometria', 'Tmhma Mathimatikon Epistimon Panepistimio Patron', 'MSc'),
+	('Odopoiia', 'Tmhma Politikon Mhxanikon Panepisthmio Patron', 'PhD');
+
+INSERT INTO has_degree VALUES 
+	('Diktua', 'Tmhma Mhxanikon Hlektronikon Ypologiston Panepisthmio Patron', 'Aggelinho', 2020, 3),  
+	('Aeronafpigos', 'Tmhma Mhxanologon Mhxanikon Panepisthmio Patron', 'VasKou', 2019, 3.5),
+	('Odopoiia', 'Tmhma Politikon Mhxanikon Panepisthmio Patron', 'ElenaD', 2021, 4.5), 
+	('Kvantiki Fusiki', 'Tmima Fusikon Episthmon Panepisthmio Patron', 'Visarion', 2021, 4);
+
+
+INSERT INTO etairia VALUES 
+('449738547', 'Β  DOY ATHINWN', 'EUROBANK', '2105780029', 'ΚOLOKOTRONI', '8', 'ATHENS','GREECE'),
+('870745694',' A DOY ATHINWN', ' BSB', '2102679674', 'FILOPOIMENOS', '32', 'ATHENS','GREECE'),
+('346890121','DOY IG ATHINWN','POSITIVO','2102698543','MAIANDROU','18','ATHENS','GREECE');
+
+
+
+INSERT INTO user VALUES 
+('KaterinaPap', '37857854', 'Katerina','Papageorgiou','2010-05-23 18:26:58', 'katerinapapa@gmail.com'),
+('DimitrisPapa', '466h6j6k', 'Dimitris','Papaspirou','2014-03-04 17:45:00', 'dimpap@gmail.com'),
+('EfiGram', '6hhjyj','Efi', 'Grammenou','2019-08-19 03:05:01', 'efigram@gmail.com'),
+('Georgia2000', 'jfihtht', 'Georgia','Kiriaki','2017-12-10 14:23:47', 'georgiakir@gmail.com'),
+('Xristos67', 'iwDW5hht', 'Xristos','Papadopoulou','2014-06-29 13:05:23', 'xristospap@gmail.com'),
+('Giorgos123', 'jheFGJr9', 'Giorgos','Kalatzis','2023-06-30 23:06:22', 'giorgoskal@gmail.com'),
+('MariaStr', 'huef8DG5', 'Maria','Strougi','1988-04-30 09:25:03', 'mariastr@gmail.com'),
+('konstantinoslog', '34G6sis88', 'Konstantinos','Logous','1673-05-14 20:35:24', 'konlog@gmail.com'),
+('agapimar', '4985nTE12', 'Agapi','Mariotaki','2018-04-05 23:11:00', 'agapimariot@gmail.com'),
+('Eleutheriaprop', 'RERi9273', 'Eleutheria','Propiniou','2015-10-26 11:11:13', 'eleprop@gmail.com'),
+('Giotapanag', '0RG4grFG', 'Giota','Panagopoulou','2012-12-06 21:17:20', 'giotapanag@gmail.com'),
+('Giannis45', 'kenGGH35', 'Giannis','Bezos','2013-03-05 13:12:23', 'giannisb@gmail.com');
+
+
+INSERT INTO evaluator VALUES 
+ ('Georgia2000','5','346890121'),
+ ('konstantinoslog','10','346890121'),
+ ('agapimar','7','870745694'),
+ ('Eleutheriaprop','1','870745694'),
+ ('Giotapanag','3','449738547') ,
+ ('Giannis45','9','449738547');
+
+
+INSERT INTO job VALUES 
+ (null ,'2013-02-18', 4045,'manager', 'Athens', 'Georgia2000', '2023-02-13 18:26:00','2023-06-15'),
+ (null ,'2015-03-15', 2565,'employee', 'Athens', 'konstantinoslog', '2023-05-18 16:26:00','2023-02-15'),
+ (null ,'2019-01-05', 3020,'manager', 'Athens', 'agapimar','2022-03-16 14:26:00','2022-03-15'),
+ (null ,'2016-12-27', 3534,'administrator','Patras', 'Eleutheriaprop', '2020-02-18 14:27:00','2021-02-18'),
+ (null ,'2017-10-28', 2854,'manager', 'London', 'agapimar', '2023-02-18 13:25:00','2023-07-18'),
+ (null ,'2013-09-25', 2680,'analyst', 'Thessaloniki', 'Giotapanag', '2022-10-14 14:26:00','2023-07-18'),
+ (null ,'2010-01-13', 3043,'manager', 'Athens', 'Giotapanag', '2022-02-13 18:26:00','2023-05-18'),
+ (null ,'2019-08-02', 2001,'employee', 'Trikala', 'Giannis45', '2012-02-18 18:26:00','2023-04-18');
+
+
+
+INSERT INTO employee VALUES 
+('KaterinaPap',  'text', 'upomonetiki', 'Interior Designer'),
+('DimitrisPapa','text', 'sunergatikos', 'Mhxanikos H/Y'),
+('EfiGram',      'text', 'unknown', 'Filologias'),
+('Xristos67',    'text', 'unknown', 'Mathimatikon'),
+('MariaStr',     'text', 'tupiki sta oraria', 'Nosileutiki'),
+('Giorgos123',   'text', 'ergatikos', 'Ximikos Mixanikos');
+
+INSERT INTO applies VALUES
+ ('KaterinaPap', 13),
+ ('DimitrisPapa', 14),
+ ('EfiGram', 15),
+ ('Xristos67', 16),
+ ('MariaStr', 17),
+ ('Giorgos123', 18);
+
+
+INSERT INTO languages VALUES
+ ('KaterinaPap','EN'),
+ ('DimitrisPapa','FR'),
+ ('EfiGram','GE'),
+ ('Xristos67','CH');
+
+
+
+
+INSERT INTO project VALUES
+ ('KaterinaPap', 1,'project baseis dedomenon','unknown'),
+ ('DimitrisPapa', 2,'project marketing','unknown'),
+ ('EfiGram', 3,'fisiki','unknown'),
+ ('Xristos67', 4,'project data analytics','unknown'),
+ ('MariaStr', 5,'sales', 'unknown'),
+ ('Giorgos123', 6, 'software', 'unknown');
+ 
+
+
+INSERT INTO subject VALUES 
+('Algevra', 'text', 'Algevra'),
+('social work', 'text', 'social work'),
+('Atmosfaira', 'text', 'Atmosfaira'),
+('Baseis Dedomenon', 'text', 'Baseis Dedomenon'),
+('Analysi sxesiakou', 'text', 'Analysi sxesiakou'),
+('digital marketing', 'text', 'digital marketing'),
+('Organiki Xhmeia', 'text', 'Organiki Xhmeia');
+
+INSERT INTO requires VALUES 
+ (13,'unknown'),
+ (14,'Algevra'),
+ (15,'social work'),
+ (16,'Analysh Atmosfairas'),
+ (17,'Baseis Dedomenon'),
+ (18,'Analysi sxesiakou'),
+ (19,'digital marketing'),
+ (20,'Organiki Xhmeia');
+
+
+INSERT INTO degree VALUES 
+ ('mhxanikos','panepistimio patron','BSc'),
+ ('hlektrologos','metsovio polutexneio','PhD'),
+ ('xhmikos','AUTH','MSc'),
+ ('fysikos','panepistimio patron','PhD'),
+ ('mathimatikos','panepistimio patron','MSc'),
+ ('politikos mhxanikos','panepistimio patron','BSc');
+
+
+INSERT INTO has_degree VALUES
+ ('mhxanikos','panepistimio patron','KaterinaPap','2020','10'),
+ ('fysikos','panepistimio patron','DimitrisPapa','2020','9'),
+ ('hlektrologos','metsovio polutexneio','EfiGram','2022','8'),
+ ('xhmikos','AUTH','Xristos67','2022','10');
+
+
+
+
+
+INSERT INTO etairia VALUES 
+ ('12','Neas Ionias','saint','2610353637','kanari','58','patra','ellada'),
+ ('13','B Athinwn','migros','5016204637','kadikoy','23','istanbul','turkey'),
+ ('14','Zwgrafou','hotelkatkat','2106574820','zografou','6','athina','ellada');
+
+INSERT INTO user VALUES 
+('KostasPap','378579','Kostas','Papageorgiou','2020-05-23 18:26:58','kostaspapa@gmail.com'),
+('EleniGeo','83094hkk','Eleni','Georgiou','2016-03-04 17:45:00','elenigeo@gmail.com'),
+('DimKek','83yrnc9','Dimitris','Kekorou','2019-08-19 03:02:01','dimkekor@gmail.com'),
+('KatGri','jfie639','Katerina','Grigoriou','2017-12-20 14:23:47','katgri@gmail.com'),
+('Baskik','iwefnc8','Baso','Kikagi','2018-06-29 13:05:23','basokik@gmail.com'),
+('Nikerg','jherigr9','Nikos','Kelesidis','2023-07-30 23:06:22','nikosk@gmail.com'),
+('MariaDhm','huef893475','Maria','Dimitriou','1988-04-30 07:25:03','mad@gmail.com'),
+('ioanlal','bbbsis88','Ioanna','Lalous','2013-05-14 20:35:24','ianlal@gmail.com'),
+('ChrisBr','4985ncnn','Xristos','Brasis','2008-04-08 20:15:00','chrisbr@gmail.com'),
+('GrigKap','hfoi9273','Grigoris','Kapernis','2005-11-26 11:11:13','grig@gmail.com'),
+('IrenBas','02873bn','Eirini','Basilakou','2012-12-06 22:13:20','irenbas@gmail.com'),
+('Giannis60','kenf8888','Giannis','Neros','2003-07-04 10:00:23','giannine@gmail.com');
+
+
+INSERT INTO evaluator VALUES 
+ ('KostasPap','6','12'),
+ ('EleniGeo','10','13'),
+ ('DimKek','7','14'),
+ ('KatGri','2','12'),
+ ('Baskik','3','13') ,
+ ('Nikerg','9','14');
+
+
+INSERT INTO job VALUES 
+ (null,'2016-02-18', 4000, 'manager', 'Athens', 'KostasPap', '2023-02-18 18:26:00', '2023-03-18'),
+ (null,'2017-03-15', 2500, 'analyst', 'Paris', 'EleniGeo', '2023-01-18 16:26:00', '2023-03-16'),
+ (null,'2018-01-05', 3020, 'manager', 'Athens', 'DimKek', '2022-01-16 14:26:00', '2022-03-18'),
+ (null,'2017-12-27', 3500, 'economist', 'Patras', 'KatGri', '2021-02-18 14:27:00', '2021-03-18'),
+ (null,'2018-10-28', 2800, 'officer', 'xanthi', 'Baskik' , '2023-02-18 15:25:00', '2023-03-18'),
+ (null,'2019-09-25', 2680, 'analyst', 'Thessaloniki', 'Nikerg', '2023-04-14 14:26:00', '2023-04-18'),
+ (null,'2016-01-13', 3000, 'manager', 'Athens', 'KostasPap', '2023-02-18 18:26:00', '2023-03-18'),
+ (null,'2018-08-02', 2000, 'analyst', 'Lamia', 'EleniGeo', '2023-02-18 18:26:00', '2023-03-18');
+
+
+
+INSERT INTO employee VALUES
+ ('MariaDhm','manager with special skills in marketing and sales','den iparxei','computer engineering'),
+ ('ioanlal','manager with special skills in marketing and sales','den iparxei','chemical engineering'),
+ ('ChrisBr','manager with special skills in marketing and sales','den iparxei','mathematics'),
+ ('GrigKap','analyst with special skills in marketing and sales','den iparxei','logistics'),
+ ('IrenBas','officer with special skills in marketing and sales','den iparxei','business administration'),
+ ('Giannis60','analyst with special skills in marketing and sales','den iparxei','computer engineering');
+
+
+INSERT INTO applies  VALUES
+ ('MariaDhm',1),
+ ('ioanlal',2),
+ ('ChrisBr',3),
+ ('GrigKap',4),
+ ('IrenBas',5),
+ ('Giannis60',6);
+
+
+INSERT INTO languages VALUES
+ ('MariaDhm','EN'),
+ ('ioanlal','FR'),
+ ('ChrisBr','GE'),
+ ('GrigKap','CH');
+
+
+INSERT INTO project VALUES
+ ('MariaDhm', 1 ,'project baseis dedomenon','https://projectkostas.com'),
+ ('ioanlal', 3 ,'project marketing','https://projecteleni.com'),
+ ('ChrisBr', 2 ,'project sales managment','https://projectnike.com'),
+ ('GrigKap', 4 ,'project data analytics','https://projectbaskik.com'),
+ ('IrenBas', 5 ,'project baseis dedomenon','https://projectiren.com'),
+ ('Giannis60', 6 ,'project domes deomenon','https://projectchris.com'),
+ ('MariaDhm', 7 ,'project mathimatiki analisi','https://projectbaskik.com');
+
+
+INSERT INTO subject VALUES 
+ ('sub1','xhmeia','sub1'),
+ ('sub2','fusikh','sub2'),
+ ('sub3','maths','sub3'),
+ ('sub4','geology','sub4'),
+ ('sub5','biology','sub5'),
+ ('sub6','economics','sub6'),
+ ('sub7','xhmeia','sub7'),
+ ('sub8','fusikh','sub8');
+
+
+INSERT INTO requires VALUES 
+ (21,'sub1'),
+ (22,'sub2'),
+ (23,'sub3'),
+ (24,'sub4'),
+ (25,'sub5'),
+ (26,'sub6'),
+ (27,'sub7'),
+ (28,'sub8');
+
+
+INSERT INTO degree VALUES 
+ ('engineer','panepistimio patron','BSc'),
+ ('Hlektrologos ','metsovio polutexneio','BSc'),
+ ('Xhmikos ','AUTH','MSc'),
+ ('Mathimatikos ','panepistimio patron','MSc'),
+ ('fusikos','panepistimio patron','PhD'),
+ ('Politikos Mhxanikos ','panepistimio patron','BSc');
+
+
+INSERT INTO has_degree VALUES
+ ('mhxanikos','panepistimio patron','MariaDhm', 2020, 10.6),
+ ('hlektrologos','metsovio polutexneio','ioanlal', 2020 , 9.5),
+ ('politikos mhxanikos','panepistimio patron','ChrisBr',2022 , 8.3),
+ ('xhmikos','AUTH','GrigKap', 2022, 10.1);
+
+
+-- τελος προπαρασκευαστικής φάσης create insert
+
+--ερωτημα 3.1.2.1
+
+CREATE TABLE aitish_proagoghs (
+app_id INT(11) NOT NULL  AUTO_INCREMENT ,
+job_id INT(11), 
+katastash ENUM ('ACTIVE', 'COMPLETED', 'CANCELED', 'PASSED'), 
+cand_username VARCHAR(30),
+submission_date DATETIME NOT NULL,
+evaluator_1 VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+evaluator_2 VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+score_1 float(3) ,
+score_2 float(3) ,
+average_score float(3) ,
+primary key (app_id),
+CONSTRAINT JOBPROAG
+FOREIGN KEY (job_id) REFERENCES job(id)
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT JOBAPPLIEDBY
+FOREIGN KEY (cand_username) REFERENCES applies(cand_username)
+ON DELETE CASCADE ON UPDATE CASCADE
+)engine=InnoDB;
+
+DELIMITER $
+CREATE TRIGGER check_aitiseis
+BEFORE INSERT ON aitish_proagoghs
+FOR EACH ROW
+BEGIN
+	declare pos_start_date DATE ;
+    declare active_app INT;
+    
+    SELECT start_date INTO pos_start_date
+    FROM job
+    WHERE id = NEW.job_id;
+    IF NEW.submission_date > date_sub(pos_start_date, INTERVAL 15 DAY) THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "MH DEKTH AITISH, H DOYLEIA KSEKINAEI SE 15 MERES";
+	END IF;
+    
+    SELECT COUNT(*) INTO active_app 
+    FROM aitish_proagoghs
+    WHERE cand_username = NEW.cand_username AND katastash = 'ACTIVE';
+    IF active_app >= 3 AND NEW.katastash = 'ACTIVE' THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "DEN MPOREI NA EXEI PARAPANW APO 3 AITISEIS";
+	END IF;
+    
+    IF NEW.katastash = 'CANCELED' AND NEW.submission_date < date_sub(pos_start_date, INTERVAL 10 DAY) THEN 
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = "EPITREPETAI DIAGRAFH 10 MERES PRIN THN ARXH THS DOULEIAS";
+    END IF;
+    
+END $
+DELIMITER ; 
+
+
+insert into aitish_proagoghs values
+(null, 10, 'ACTIVE', 'ElenaD', '2023-12-28 10:00:00', 'Anasta', 'MariaMak', null, null, null),
+(null, 10, 'ACTIVE', 'ElenaD', '2023-12-29 11:00:00', 'Anasta', 'MariaMak', 5, 5 , 5),
+(null, 10, 'ACTIVE', 'Alice12', '2023-12-30 10:00:00','Anasta', 'MariaMak', 2, 2, 2),
+(null, 10, 'ACTIVE', 'Alice12', '2023-12-30 11:00:00','Anasta', 'MariaMak', null, null, null);
+
+
+-- ερωτημα 3.1.2.2
+
+DELIMITER $
+DROP PROCEDURE IF EXISTS upologismo_vathmou $
+CREATE PROCEDURE upologismo_vathmou()
+BEGIN
+	declare id INT(11);
+	declare cand_name VARCHAR(36);
+    declare eval_score FLOAT(3);
+    declare temp_score FLOAT(3);
+    declare sc1 FLOAT(3);
+	declare sc2 FLOAT(3);
+	declare avg_sc FLOAT(3);
+    declare finishedFlag INT(2) default 0;
+    
+	declare appCUR CURSOR FOR
+		SELECT app_id, cand_username FROM aitish_proagoghs WHERE katastash = 'ACTIVE';
+        
+	declare degreesCUR CURSOR FOR
+		SELECT
+         
+            (SELECT COUNT(*) FROM has_degree INNER JOIN degree ON has_degree.degr_title=degree.titlos AND has_degree.degr_idryma=degree.idryma 
+			WHERE cand_name=cand_username AND bathmida = 'BSc') +
+			(2*(SELECT COUNT(*) FROM has_degree INNER JOIN degree ON has_degree.degr_title=degree.titlos AND has_degree.degr_idryma=degree.idryma
+			WHERE cand_name = cand_username AND bathmida = 'MSc')) +
+			(3*(SELECT COUNT(*) FROM has_degree INNER JOIN degree ON has_degree.degr_title=degree.titlos AND has_degree.degr_idryma=degree.idryma
+			WHERE cand_name = cand_username  AND bathmida = 'PhD'))
+            END
+		FROM has_degree
+        INNER JOIN degree ON has_degree.degr_title = degree.titlos AND has_degree.degr_idryma = degree.idryma
+        WHERE cand_username = cand_name;
+    
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finishedFlag = 1;
+	
+    OPEN appCUR;
+    
+    applicationLoop: LOOP
+		FETCH appCUR INTO id, cand_name;
+        IF finishedFlag THEN
+			LEAVE applicationLoop;
+		END IF;
+        
+		SET eval_score = 0;
+        OPEN degreesCUR;
+        
+		degreesLoop: LOOP
+			FETCH degreesCUR INTO temp_score;
+            IF finishedFlag THEN
+				LEAVE degreesLoop;
+			END IF;
+            SET eval_score = eval_score + temp_score;
+		END LOOP degreesLoop;
+        
+		CLOSE degreesCUR;
+        SET finishedFlag = 0;
+
+		SELECT
+			(SELECT COUNT(*) FROM languages WHERE candid = cand_name) +
+			(SELECT COUNT(*) FROM project WHERE candid = cand_name) 
+            INTO temp_score;
+        SET eval_score = eval_score + temp_score;
+        
+		SELECT score_1, score_2, average_score INTO sc1, sc2, avg_sc FROM aitish_proagoghs WHERE app_id = id;
+        SET sc1 = IFNULL(sc1, eval_score),
+			sc2 = IFNULL(sc2, eval_score),
+            avg_sc = (sc1 + sc2) / 2; 
+         
+		UPDATE aitish_proagoghs SET average_score = avg_sc, score_1 = sc1, score_2 = sc2, katastash = 'COMPLETED' WHERE app_id = id;
+        
+	END LOOP applicationLoop;
+    CLOSE appCUR;
+    
+END $
+DELIMITER ;
+call upologismo_vathmou;
+
+CREATE TABLE istoriko (
+app_id INT(11) NOT NULL , 
+evaluator_1 VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+evaluator_2 VARCHAR(36) DEFAULT 'unknown' NOT NULL,
+username VARCHAR(36),
+job_id INT(11),
+katastash ENUM('ACTIVE', 'COMPLETED', 'CANCELED', 'PASSED'),
+telikos_vathmos FLOAT(3),
+PRIMARY KEY(app_id)
+
+)engine=InnoDB;
+
+DELIMITER $ 
+DROP PROCEDURE IF EXISTS aksiologish$
+CREATE PROCEDURE aksiologish()
+begin
+	
+	declare final_score FLOAT(3); 
+    declare sub_date DATE;
+    declare id INT(11);
+    declare first_date DATE;
+    declare passed_aks_id INT(11);
+    DECLARE max_score FLOAT(3);
+    
+    DECLARE finishedFlag INT(2);
+    DECLARE aksCUR CURSOR FOR
+    SELECT app_id, average_score, submission_date FROM aitish_proagoghs WHERE (katastash = 'ACRIVE' OR katastash = 'COMPLETED');
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finishedFlag = 1;
+    
+    
+    OPEN aksCUR;
+    SET finishedFlag = 0;
+    SET max_score = 0;
+   
+		WHILE finishedFlag=0 DO
+			
+        FETCH aksCUR INTO id, final_score, sub_date;
+        IF (final_score > max_score) OR (final_score = max_score AND sub_date <  first_date) THEN 
+			SET final_score = max_score;
+			SET passed_aks_id = id;
+			SET first_date = sub_date;
+        END IF;
+        
+        INSERT INTO istoriko (app_id, evaluator_1, evaluator_2, username, job_id, katastash, telikos_vathmos)
+        SELECT app_id, evaluator_1, evaluator_2, cand_username, job_id, katastash, average_score
+        FROM aitish_proagoghs WHERE app_id = id AND (katastash = 'COMPLETED' OR katastash = 'ACTIVE');
+        
+        DELETE FROM aitish_proagoghs WHERE app_id = id AND (katastash = 'COMPLETED' OR katastash = 'ACTIVE');
+        
+        END WHILE;
+        
+        UPDATE istoriko SET katastash = 'PASSED' WHERE passed_aks_id = app_id;
+        
+    
+    CLOSE aksCUR;
+  
+end $
+DELIMITER ;
+
+call aksiologish;
+
+-- ερωτημα 3.1.2.3
+
+CREATE TABLE log_table(
+evaluator_1 VARCHAR(36),
+evaluator_2 VARCHAR(36),
+emp_username VARCHAR(36),
+job_id INT(11) NOT NULL AUTO_INCREMENT ,
+katastash ENUM('COMPLETED', 'PASSED'),
+final_score INT(20),
+PRIMARY KEY (job_id)
+)engine=InnoDB;
+
+-- w3 schools
+SET GLOBAL max_allowed_packet=100000;
+DELIMITER $
+
+DROP PROCEDURE IF EXISTS insert_into_log$
+CREATE PROCEDURE insert_into_log()
+BEGIN
+
+	declare counter INT;
+	SET counter = 0; -- Αρχικοποίηση μεταβλητής
+
+	WHILE counter < 60000 DO
+		INSERT INTO log_table
+		VALUES (
+			CONCAT('evaluator_1_NO', counter),
+			CONCAT('evaluator_2_NO', counter),
+			CONCAT('employee_NO', counter), 
+			NULL, 
+			CASE WHEN counter MOD 10 = 0 THEN 'PASSED' ELSE 'COMPLETED' END, 
+			FLOOR(RAND() * 20 + 1)
+			);
+    
+		SET counter = counter + 1;
+	END WHILE;
+
+    
+END $
+DELIMITER ;
+CALL insert_into_log();
+
+
+-- ΕΡΩΤΗΜΑ 3.1.2.4
+
+CREATE TABLE DBA(
+dba_id INT(11)  NOT NULL auto_increment,
+username VARCHAR(36) DEFAULT 'unknown',
+start_date DATETIME NOT NULL,
+end_date DATE ,
+energia ENUM ('UPDATE', 'INSERT', 'DELETE'),
+descr TEXT,
+imeromhnia_wra_energias DATETIME,
+PRIMARY KEY (dba_id)
+)engine = InnoDB;
+
+
+-- ερωτημα 3.1.3.1
+
+delimiter $ 
+drop procedure if exists CheckEval $
+create procedure CheckEval(IN eval_name VARCHAR(36), IN emp_name VARCHAR(36), IN jobID INT(11))
+BEGIN
+	declare exists_flag INT(2);
+    declare final_grade FLOAT(3);
+    
+    select count(*)
+    into exists_flag
+    from istoriko 
+    where (evaluator_1 = eval_name OR evaluator_2 = eval_name) AND username = emp_name AND job_id = jobID ;
+    
+    IF exists_flag > 0 THEN
+		select telikos_vathmos 
+        into final_grade
+        from istoriko
+        where (evaluator_1 = eval_name OR evaluator_2 = eval_name) AND username = emp_name AND job_id = jobID 
+        LIMIT 1;
+        
+        select CONCAT('exei vathmo ', final_grade) as result;
+    ELSEIF exists_flag is null THEN 
+    CALL upologismo_vathmou;
+    select telikos_vathmos 
+        into final_grade
+        from istoriko
+        where (evaluator_1 = eval_name OR evaluator_2 = eval_name) AND username = emp_name AND job_id = jobID 
+        LIMIT 1;
+        select CONCAT('exei vathmo ', final_grade) as result;
+        
+	ELSE select "Den exei vathmo apo afton ton evaluator" AS RESULT;
+    
+    END IF;
+
+END $
+delimiter ;
+call CheckEval('Anasta', 'Alice12', 10);
+
+
+-- ερώτημα 3.1.3.2
+
+DELIMITER $
+drop procedure if exists ManageApplication$
+CREATE PROCEDURE ManageApplication( IN emp_username VARCHAR(30), IN jobID INT, IN action CHAR(1))
+BEGIN
+    DECLARE evaluator_1 VARCHAR(30);
+    DECLARE evaluator_2 VARCHAR(30);
+
+    -- Get evaluators from the same company if not already assigned
+    SELECT evaluator_1, evaluator_2
+    INTO evaluator_1, evaluator_2
+    FROM istoriko
+    WHERE jobID = job_id AND emp_username = username
+	limit 1;
+    
+    IF action = 'i' THEN
+        -- Insert application if evaluators are available
+        IF evaluator_1 IS NOT NULL AND evaluator_2 IS NOT NULL THEN
+            INSERT INTO istoriko (username, job_id, evaluator_1, evaluator_2)
+            VALUES (emp_username, jobID, evaluator_1, evaluator_2);
+        ELSE
+            -- Handle case when evaluators are not available
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Evaluators are not available for the job';
+            
+        END IF;
+    ELSEIF action = 'c' THEN
+        -- Cancel application
+        IF EXISTS 
+        (SELECT * FROM istoriko
+			WHERE username = emp_username AND jobID = job_id AND katastash = 'COMPLETED' or katastash = 'ACTIVE') THEN
+            UPDATE istoriko
+            SET katastash = 'CANCELED'
+            WHERE username = emp_username AND jobID = job_id;
+            SELECT 'Application canceled' AS message;
+        ELSE
+            -- Handle case when no application exists or already canceled
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No active application found';
+        END IF;
+    ELSEIF action = 'a' THEN
+        -- Activate canceled application
+        IF EXISTS (SELECT * FROM istoriko WHERE username = emp_username AND jobID = job_id AND katastash = 'CANCELED') THEN
+            UPDATE istoriko
+            SET katastash = 'ACTIVE'
+            WHERE username = emp_username AND jobID = job_id;
+            SELECT 'Application activated' AS message;
+            
+        ELSE
+            -- Handle case when no canceled application exists or already active
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No canceled application found';
+        END IF;
+        
+    ELSE
+        -- Handle invalid action
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Invalid action';
+    END IF;
+    
+    
+        
+    
+END $
+
+DELIMITER ;
+call ManageApplication('ElenaD', 10, 'c');
+
+-- ερωτημα 3.1.3.3
+
+DELIMITER $
+drop procedure if exists FillJobPosition$
+CREATE PROCEDURE FillJobPosition( IN job_id INT)
+BEGIN
+    declare id INT(11);
+	declare cand_name VARCHAR(36);
+    declare eval_score FLOAT(3);
+    declare temp_score FLOAT(3);
+    declare sc1 FLOAT(3);
+	declare sc2 FLOAT(3);
+	declare avg_sc FLOAT(3);
+    declare finishedFlag INT(2) default 0;
+    
+	declare appCUR CURSOR FOR
+		SELECT app_id, username FROM istoriko WHERE katastash = 'ACTIVE';
+        
+	declare degreesCUR CURSOR FOR
+		SELECT
+         
+            (SELECT COUNT(*) FROM has_degree INNER JOIN degree ON has_degree.degr_title=degree.titlos AND has_degree.degr_idryma=degree.idryma 
+			WHERE cand_name=cand_username AND bathmida = 'BSc') +
+			(2*(SELECT COUNT(*) FROM has_degree INNER JOIN degree ON has_degree.degr_title=degree.titlos AND has_degree.degr_idryma=degree.idryma
+			WHERE cand_name = cand_username AND bathmida = 'MSc')) +
+			(3*(SELECT COUNT(*) FROM has_degree INNER JOIN degree ON has_degree.degr_title=degree.titlos AND has_degree.degr_idryma=degree.idryma
+			WHERE cand_name = cand_username  AND bathmida = 'PhD'))
+            END
+		FROM has_degree
+        INNER JOIN degree ON has_degree.degr_title = degree.titlos AND has_degree.degr_idryma = degree.idryma
+        WHERE cand_username = cand_name;
+    
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finishedFlag = 1;
+	
+    OPEN appCUR;
+    
+    applicationLoop: LOOP
+		FETCH appCUR INTO id, cand_name;
+        IF finishedFlag THEN
+			LEAVE applicationLoop;
+		END IF;
+        
+		SET eval_score = 0;
+        OPEN degreesCUR;
+        
+		degreesLoop: LOOP
+			FETCH degreesCUR INTO temp_score;
+            IF finishedFlag THEN
+				LEAVE degreesLoop;
+			END IF;
+            SET eval_score = eval_score + temp_score;
+		END LOOP degreesLoop;
+        
+		CLOSE degreesCUR;
+        SET finishedFlag = 0;
+
+		SELECT
+			(SELECT COUNT(*) FROM languages WHERE candid = cand_name) +
+			(SELECT COUNT(*) FROM project WHERE candid = cand_name) 
+            INTO temp_score;
+        SET eval_score = eval_score + temp_score;
+        
+		SELECT score_1, score_2, average_score INTO sc1, sc2, avg_sc FROM aitish_proagoghs WHERE app_id = id;
+        SET sc1 = IFNULL(sc1, eval_score),
+			sc2 = IFNULL(sc2, eval_score),
+            avg_sc = (sc1 + sc2) / 2; 
+         
+		UPDATE istoriko SET telikos_vathmos = avg_sc, katastash = 'COMPLETED' WHERE app_id = id;
+        
+	END LOOP applicationLoop;
+    CLOSE appCUR;
+END $
+DELIMITER ;
+call FillJobPosition(10);
+
+-- τελοσ τριτου προσιτζουρ 
+
+-- ερωτημα 3.1.3.4
+
+ALTER TABLE log_table ADD INDEX idx_final_score (final_score);
+
+DELIMITER $
+drop procedure if exists GetAppBetweenScores$
+CREATE PROCEDURE GetAppBetweenScores(IN lower_bound INT, IN upper_bound INT)
+BEGIN
+    SELECT emp_username, job_id 
+    FROM log_table
+    WHERE final_score BETWEEN lower_bound AND upper_bound;
+END$
+
+DELIMITER ;
+call GetAppBetweenScores(7, 8);
+
+CREATE INDEX idx_evaluators ON istoriko(evaluator_1, evaluator_2);
+
+DELIMITER $
+DROP PROCEDURE IF EXISTS GetAppByEvaluator$
+CREATE PROCEDURE GetAppByEvaluator(IN evaluator_username VARCHAR(30))
+BEGIN
+    -- Χρήση του ευρετηρίου για βελτιστοποίηση του ερωτήματος
+    SELECT username, job_id
+    FROM istoriko
+    WHERE evaluator_1 = evaluator_username OR evaluator_2 = evaluator_username;
+END $
+DELIMITER ;
+call GetAppByEvaluator('Anasta');
+
+
+-- triggers ερωτηματα
+
+-- Trigger for the user table
+
+delimiter $
+
+CREATE TRIGGER user_insert
+AFTER INSERT ON user
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'INSERT','Egine insert ston pinaka user', NOW());
+END;
+$
+
+
+
+
+
+CREATE TRIGGER UPDATE_USER
+AFTER UPDATE ON user
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'UPDATE','Egine update ston pinaka user', NOW());
+END;
+
+$
+
+CREATE TRIGGER DELETE_USER
+AFTER DELETE ON user
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'DELETE','Egine delete ston pinaka user', NOW());
+END;
+$
+
+
+-- Trigger for the degree table
+
+DELIMITER $
+CREATE TRIGGER degree_insert
+AFTER INSERT ON degree
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'INSERT','Egine insert ston pinaka degree', NOW());
+END;
+$
+
+CREATE TRIGGER degree_update
+AFTER UPDATE ON degree
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'UPDATE','Egine update ston pinaka degree', NOW());
+END;
+$
+
+
+CREATE TRIGGER degree_delete
+AFTER DELETE ON degree
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'DELETE','Egine delete ston pinaka degree', NOW());
+END;
+$
+
+
+-- Trigger for the job table
+
+CREATE TRIGGER job_insert
+AFTER INSERT ON job
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'INSERT','Egine insert ston pinaka job', NOW());
+END;
+$
+
+CREATE TRIGGER job_update
+AFTER UPDATE ON job
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'UPDATE','Egine update ston pinaka job', NOW());
+END;
+$
+
+CREATE TRIGGER job_delete
+AFTER DELETE ON job
+FOR EACH ROW
+BEGIN
+    INSERT INTO dba (dba_id, username, start_date, end_date, energia, descr, imeromhnia_wra_energias)
+    VALUES (null, current_user(),
+    FROM_UNIXTIME(RAND() * (UNIX_TIMESTAMP() - UNIX_TIMESTAMP('2003-01-01')) + UNIX_TIMESTAMP('2015-01-01')),
+    null, 'DELETE','Egine delete ston pinaka job', NOW());
+END;
+$
+DELIMITER ;
+
